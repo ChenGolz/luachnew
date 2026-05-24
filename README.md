@@ -1,122 +1,98 @@
-# לוח בית חכם למחלות שכחה / דמנציה
+# לוח בית חכם למחלות שכחה — גרסה סטטית ל-GitHub Pages
 
-פרויקט React/Vite בעברית, מוכן להעלאה ל-GitHub ולפריסה ב-GitHub Pages.
+הגרסה הזו נועדה לפתור בדיוק את בעיית `main.js 404`.
 
-## תיקון למסך לבן ב-GitHub Pages
+אין כאן React/Vite, אין npm, אין build, ואין GitHub Actions חובה.  
+אלה קבצים סטטיים בלבד ש-GitHub Pages יכול להציג ישירות.
 
-הגרסה הזו לא משתמשת ב-`main.js` ידני. אם בריפוזיטורי הישן יש קבצים כמו `main.js` או `index.html` ישן שמפנה אל `main.js`, מחקו/החליפו אותם בכל הקבצים מתוך ה-ZIP הזה.
+## הקבצים החשובים
 
-האתר נבנה על ידי Vite ו-GitHub Actions, ולכן הקבצים האמיתיים נוצרים אוטומטית תחת `dist/assets` בזמן הפריסה.
+- `index.html`
+- `main.js`
+- `style.css`
+- `favicon.svg`
+- `.nojekyll`
 
-## מה יש בפנים
+## העלאה ל-GitHub
 
-- מסך מטופלת פשוט וברור: איפה אני, מה עכשיו, מה הדבר הבא, למי להתקשר.
-- מסך מטפל לניהול שגרה, תרופות, אוכל/שתייה, אנשי קשר, בטיחות ויומן תסמינים.
-- מצב הרגעה עם הקראה קולית בעברית באמצעות Web Speech API.
-- ממשק ערב/לילה רגוע יותר לפי השעה.
-- שעון דיגיטלי + שעון מחוגים + פס התקדמות יומי.
-- חיוג בלחיצה, QR לחיוג ממכשיר אחר, וקישור אופציונלי לשיחת וידאו.
-- שמירה מקומית ב-localStorage כברירת מחדל.
-- Adapter מוכן לסנכרון Supabase בענן.
+1. היכנסו לריפוזיטורי, למשל `luachnew`.
+2. מחקו את הקבצים הישנים, במיוחד `index.html` ישן שמפנה ל-main.js לא קיים.
+3. העלו את **כל הקבצים שבתוך התיקייה הזו** לשורש הריפוזיטורי.
+4. ודאו ש-`main.js` נמצא ממש ליד `index.html`.
 
-## הרצה מקומית
-
-```bash
-npm install
-npm run dev
-```
-
-לאחר מכן פותחים את הכתובת שמופיעה בטרמינל, בדרך כלל:
+המבנה צריך להיות:
 
 ```txt
-http://localhost:5173
+/
+├─ index.html
+├─ main.js
+├─ style.css
+├─ favicon.svg
+├─ .nojekyll
+└─ README.md
 ```
 
-## העלאה ל-GitHub Pages
+## הגדרת GitHub Pages
 
-1. צרו ריפוזיטורי, לדוגמה `luach`.
-2. העלו את כל הקבצים מתוך התיקייה הזו לשורש הריפוזיטורי.
-3. ב-GitHub היכנסו אל **Settings → Pages**.
-4. תחת **Build and deployment** בחרו **GitHub Actions**.
-5. דחפו/העלו את הקבצים ל-branch `main`.
-6. היכנסו ל-**Actions** וודאו שהפריסה הסתיימה בירוק.
+Settings → Pages → Build and deployment:
 
-האתר יופיע בדרך כלל בכתובת:
+בחרו:
+- Source: `Deploy from a branch`
+- Branch: `main`
+- Folder: `/root`
+
+לא צריך GitHub Actions בגרסה הזו.
+
+## בדיקה
+
+האתר יהיה בכתובת דומה:
 
 ```txt
-https://YOUR_USER.github.io/YOUR_REPO/
+https://USERNAME.github.io/REPOSITORY/
 ```
 
 לדוגמה:
 
 ```txt
-https://chengolz.github.io/luach/
+https://chengolz.github.io/luachnew/
 ```
 
-## אם עדיין מופיע מסך לבן
+## Supabase
 
-פתחו DevTools → Console. אם מופיעה שגיאה על `main.js 404`, זה אומר שעדיין נשאר בריפוזיטורי `index.html` ישן. ודאו שה-`index.html` בשורש נראה כך:
+בתוך `main.js` יש `CLOUD_SYNC_CONFIG`.  
+ברירת המחדל היא:
 
-```html
-<!doctype html>
-<html lang="he" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0f172a" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <title>לוח בית חכם למחלות שכחה</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+```js
+enabled: false
 ```
 
-## Supabase — אופציונלי
+כלומר האתר עובד כרגע עם `localStorage`.
 
-כרגע הכול נשמר מקומית בדפדפן. להפעלת סנכרון ענן:
-
-1. צרו פרויקט Supabase.
-2. הריצו את ה-SQL הבא:
+להפעלה עתידית של סנכרון ענן:
+1. צרו Supabase project.
+2. צרו טבלה:
 
 ```sql
 create table memory_board_state (
-  board_id text not null,
-  state_key text not null,
+  board_id text primary key,
   value jsonb not null,
-  updated_at timestamptz default now(),
-  primary key (board_id, state_key)
+  updated_at timestamptz default now()
 );
-
-alter table memory_board_state enable row level security;
-
-create policy "allow anon read" on memory_board_state
-for select to anon
-using (true);
-
-create policy "allow anon insert" on memory_board_state
-for insert to anon
-with check (true);
-
-create policy "allow anon update" on memory_board_state
-for update to anon
-using (true)
-with check (true);
 ```
 
-3. ב-GitHub הוסיפו Repository Variables או Secrets:
+3. הכניסו את `supabaseUrl` ואת `supabaseAnonKey`.
+4. שנו `enabled` ל-`true`.
+
+## חשוב
+
+אם בקונסול עדיין מופיע:
 
 ```txt
-VITE_CLOUD_SYNC_ENABLED=true
-VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
-VITE_SUPABASE_ANON_KEY=YOUR_ANON_KEY
-VITE_BOARD_ID=grandma-home-board
+Failed to load resource: main.js 404
 ```
 
-4. הריצו מחדש את ה-workflow.
-
-## הערה חשובה
-
-הכלי הזה לא מחליף ייעוץ רפואי או הנחיות רופא/ה. בתרופות, נפילות, שוטטות או שינוי פתאומי במצב — מומלץ לערב גורם רפואי מתאים.
+זה אומר ש-`main.js` לא נמצא באותו מקום כמו `index.html`, או ש-GitHub Pages עדיין מציג גרסה ישנה. נסו:
+- Ctrl+F5
+- מחיקת כל הקבצים הישנים
+- העלאה מחדש
+- המתנה של 1-2 דקות ל-GitHub Pages
